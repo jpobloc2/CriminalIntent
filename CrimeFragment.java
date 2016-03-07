@@ -22,15 +22,17 @@ import java.util.UUID;
 public class CrimeFragment extends Fragment {
 
     private static final String ARG_CRIME_ID = "crime_id";
+    private static final String ARG_BOX_CHECKED = "box_checked";
 
     private Crime mCrime;
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckBox;
 
-    public static CrimeFragment newInstance(UUID crimeId) {
+    public static CrimeFragment newInstance(UUID crimeId, boolean checked) {
         Bundle args = new Bundle();
         args.putSerializable(ARG_CRIME_ID, crimeId);
+        args.putBoolean(ARG_BOX_CHECKED, checked);
 
         CrimeFragment fragment = new CrimeFragment();
         fragment.setArguments(args);
@@ -41,8 +43,9 @@ public class CrimeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         UUID crimeId = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
+        boolean checked = getArguments().getBoolean(ARG_BOX_CHECKED);
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
-
+        mCrime.setSolved(checked);
     }
 
     @Override
