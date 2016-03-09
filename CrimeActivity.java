@@ -13,13 +13,11 @@ public class CrimeActivity extends SingleFragmentActivity {
 
     private static final String EXTRA_CRIME_ID =
             "com.bignerdranch.android.criminalintent.crime_id";
-    private static final String EXTRA_CRIME_CHECKED =
-            "com.bignerdranch.android.criminalintent.crime_checked";
+
 
     public static Intent newIntent(Context packageContext, UUID crimeID, boolean checked){
         Intent intent = new Intent(packageContext, CrimeActivity.class);
         intent.putExtra(EXTRA_CRIME_ID, crimeID);
-        intent.putExtra(EXTRA_CRIME_CHECKED, checked);
         return intent;
     }
 
@@ -27,7 +25,6 @@ public class CrimeActivity extends SingleFragmentActivity {
     protected Fragment createFragment(){
         UUID crimeId = (UUID) getIntent()
                 .getSerializableExtra(EXTRA_CRIME_ID);
-        Boolean checked = getIntent().getBooleanExtra(EXTRA_CRIME_CHECKED, false);
-        return CrimeFragment.newInstance(crimeId, checked);
+        return CrimeFragment.newInstance(crimeId);
     }
 }
