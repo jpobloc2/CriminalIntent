@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -25,9 +26,12 @@ import java.util.List;
  */
 public class CrimeListFragment extends Fragment {
     private RecyclerView mCrimeRecyclerView;
+    private TextView mCrimeEmptyText;
+    private Button mAddCrime;
     private CrimeAdapter mAdapter;
     private boolean mSubtitleVisible;
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
+    private static final String EMPTY_TEXT = "empty";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,6 +46,19 @@ public class CrimeListFragment extends Fragment {
 
         mCrimeRecyclerView = (RecyclerView) view.findViewById(R.id.crime_recycler_view);
         mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        mCrimeEmptyText = (TextView) view.findViewById(R.id.empty_text);
+        mAddCrime = (Button) view.findViewById(R.id.add_crime);
+        mAddCrime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Crime crime = new Crime();
+                CrimeLab.get(getActivity()).addCrime(crime);
+                Intent intent = CrimePagerActivity
+                        .newIntent(getActivity(), crime.getId());
+                startActivity(intent);
+            }
+        });
 
         if (savedInstanceState != null) {
             mSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
@@ -114,6 +131,14 @@ public class CrimeListFragment extends Fragment {
     private void updateUI() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
+
+        if (crimes.size() == 0) {
+            mCrimeEmptyText.setVisibility(View.VISIBLE);
+            mAddCrime.setVisibility(View.VISIBLE);
+        } else {
+            mCrimeEmptyText.setVisibility(View.INVISIBLE);
+            mAddCrime.setVisibility(View.INVISIBLE);
+        }
 
         if (mAdapter == null) {
             mAdapter = new CrimeAdapter(crimes);
