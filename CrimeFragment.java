@@ -30,6 +30,8 @@ public class CrimeFragment extends Fragment {
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
     private static final int REQUEST_DATE = 0;
+    private static final String DELETE = "Delete";
+    private static final int CONFIRM_DELETE = 1;
     private Crime mCrime;
     private EditText mTitleField;
     private Button mDateButton;
@@ -64,7 +66,6 @@ public class CrimeFragment extends Fragment {
             @Override
             public void beforeTextChanged(
                     CharSequence s, int start, int count, int after) {
-                //Intentionally left blank
             }
 
             @Override
@@ -75,7 +76,6 @@ public class CrimeFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                //Also blank
             }
         });
 
@@ -114,8 +114,10 @@ public class CrimeFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_delete_crime:
-                CrimeLab.get(getActivity()).removeCrime(mCrime);
-                this.getActivity().finish();
+                FragmentManager manager = getFragmentManager();
+                DeleteCrimeFragment dialog = new DeleteCrimeFragment();
+                dialog.setTargetFragment(CrimeFragment.this, CONFIRM_DELETE);
+                dialog.show(manager, DELETE);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -132,6 +134,9 @@ public class CrimeFragment extends Fragment {
                     .getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
             updateDate();
+        } else if (requestCode == CONFIRM_DELETE) {
+            CrimeLab.get(getActivity()).removeCrime(mCrime);
+            this.getActivity().finish();
         }
     }
 
